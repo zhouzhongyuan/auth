@@ -3,7 +3,6 @@
  */
 
 var express = require('express');
-var hash = require('./pass').hash;
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
@@ -17,7 +16,11 @@ app.set('views', __dirname + '/views');
 // middleware
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({ secret: 'shhhh, very secret' }));
+app.use(session({ secret: 'mi',
+    genid:function(){
+        return '63';
+    },
+}));
 
 // Session-persisted message middleware
 
@@ -32,21 +35,12 @@ app.use(function(req, res, next){
     next();
 });
 
-// dummy database
+// 此处为数据库
 
 var users = {
-    tj: { name: 'tj' }
+    tj: { name: 'tj', password: 'tj' },
+    zy: { name: 'zy', password: 'zy' },
 };
-
-// when you create a user, generate a salt
-// and hash the password ('foobar' is the pass here)
-
-hash('foobar', function(err, salt, hash){
-    if (err) throw err;
-    // store the salt & hash in the "db"
-    users.tj.salt = salt;
-    users.tj.hash = hash;
-});
 
 
 // Authenticate using our plain-object database of doom!
@@ -56,14 +50,12 @@ function authenticate(name, pass, fn) {
     var user = users[name];
     // query the db for the given username
     if (!user) return fn(new Error('cannot find user'));
-    // apply the same algorithm to the POSTed password, applying
-    // the hash against the pass / salt, if there is a match we
-    // found the user
-    hash(pass, user.salt, function(err, hash){
-        if (err) return fn(err);
-        if (hash == user.hash) return fn(null, user);
+    //对比密码是否正确
+    if(pass === user.password){
+        return fn(null, user);
+    }else{
         fn(new Error('invalid password'));
-    });
+    };
 }
 
 function restrict(req, res, next) {
