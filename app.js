@@ -18,8 +18,10 @@ app.set('views', __dirname + '/views');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: 'mi',
     genid:function(){
-        return '63';
+        const d = new Date();
+        return d.getMinutes().toString() + d.getSeconds();
     },
+    cookie: { maxAge: 300e3 },
 }));
 
 // Session-persisted message middleware
@@ -90,8 +92,8 @@ app.get('/login', function(req, res){
 app.post('/login', function(req, res){
     authenticate(req.body.username, req.body.password, function(err, user){
         if (user) {
-            // Regenerate session when signing in
-            // to prevent fixation
+            // Regenerate session when signing in to prevent fixation
+            // auth验证成功之后,重新生成新的session ID
             req.session.regenerate(function(){
                 // Store the user's primary key
                 // in the session store to be retrieved,
