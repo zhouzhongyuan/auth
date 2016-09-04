@@ -19,9 +19,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: 'mi',
     genid:function(){
         const d = new Date();
-        return d.getMinutes().toString() + d.getSeconds();
+        var m = d.getMinutes().toString();
+        m = m.replace(/^(\d){1}$/,'0$1');
+
+        var s = d.getSeconds().toString();
+        s = s.replace(/^(\d){1}$/,'0$1');
+        return m + s;
     },
-    cookie: { maxAge: 300e3 },
+    cookie: { maxAge: 3000e3 },
 }));
 
 // Session-persisted message middleware
