@@ -18,3 +18,9 @@
 ### TODO
 
 登录过程的流程图
+
+### 问题
+1. 问:createSession的作用是什么?
+
+   答:
+2. 问:express中间件返回一个function的作用是什么?
