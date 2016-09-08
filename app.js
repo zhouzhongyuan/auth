@@ -1,20 +1,14 @@
-/**
- * Module dependencies.
- */
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var app = module.exports = express();
 
-// config
-
+// confi
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
 // middleware
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: 'mi',
     genid:function(){
@@ -117,8 +111,6 @@ app.post('/login', function(req, res){
         }
     });
 });
-
-/* istanbul ignore next */
 if (!module.parent) {
     app.listen(3002);
     console.log('Express started on port 3002');
